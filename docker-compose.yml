@@ -1,0 +1,46 @@
+services:
+
+  nginx:
+    container_name: test-yii-nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./:/var/www/html
+    depends_on:
+      - php
+
+  php:
+    container_name: test-yii-php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=messenger_db
+      - DB_USER=messenger_user
+      - DB_PASSWORD=messenger_pass
+      - REDIS_HOST=redis
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    container_name: test-yii-postgres
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: messenger_db
+      POSTGRES_USER: messenger_user
+      POSTGRES_PASSWORD: messenger_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    container_name: test-yii-redis
+    image: redis:7-alpine
+
+volumes:
+  postgres_data: 

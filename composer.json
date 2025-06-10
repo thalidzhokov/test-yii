@@ -1,0 +1,25 @@
+{
+    "name": "app/yii2-messenger-api",
+    "type": "project",
+    "require": {
+        "php": ">=8.0.0",
+        "yiisoft/yii2": "~2.0.45",
+        "yiisoft/yii2-composer": "~2.0.4",
+        "yiisoft/yii2-redis": "~2.0.0",
+        "yidas/yii2-composer-bower-skip": "~2.0.0"
+    },
+    "config": {
+        "fxp-asset": {
+            "enabled": false
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+} 
