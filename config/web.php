@@ -1,19 +1,25 @@
 <?php
 
 $db = require __DIR__ . '/db.php';
+$redis = require __DIR__ . '/redis.php';
 
 $config = [
     'id' => 'messenger-api',
     'basePath' => dirname(__DIR__),
     'components' => [
         'request' => [
-            'cookieValidationKey' => 'your-secret-key-here',
+            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?: 'your-secret-key-here',
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
         ],
         'db' => $db,
-        //'redis' => $redis,
+        'redis' => $redis,
+        // Или
+        // 'cache' => [
+        //     'class' => 'yii\redis\Cache',
+        //     'redis' => $redis,
+        // ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,

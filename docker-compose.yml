@@ -19,11 +19,20 @@ services:
     volumes:
       - ./:/var/www/html
     environment:
-      - DB_HOST=postgres
-      - DB_NAME=messenger_db
-      - DB_USER=messenger_user
-      - DB_PASSWORD=messenger_pass
-      - REDIS_HOST=redis
+      # Database
+      - DB_HOST=${DB_HOST:-postgres}
+      - DB_NAME=${DB_NAME:-messenger_db}
+      - DB_USER=${DB_USER:-messenger_user}
+      - DB_PASSWORD=${DB_PASSWORD:-messenger_pass}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_DB=${REDIS_DB:-0}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      # Application
+      - YII_DEBUG=${YII_DEBUG:-false}
+      - YII_ENV=${YII_ENV:-prod}
+      - COOKIE_VALIDATION_KEY=${COOKIE_VALIDATION_KEY:-please-generate-random-key}
     depends_on:
       - postgres
       - redis
@@ -32,15 +41,17 @@ services:
     container_name: test-yii-postgres
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: messenger_db
-      POSTGRES_USER: messenger_user
-      POSTGRES_PASSWORD: messenger_pass
+      POSTGRES_DB: ${DB_NAME:-messenger_db}
+      POSTGRES_USER: ${DB_USER:-messenger_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-messenger_pass}
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
     container_name: test-yii-redis
     image: redis:7-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
 
 volumes:
   postgres_data: 
