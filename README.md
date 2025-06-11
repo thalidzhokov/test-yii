@@ -47,6 +47,7 @@ curl -X POST http://localhost/api/v1/webhook -H "Content-Type: application/json"
 ### Возможно, критично для прода или тестировщиков и аналитиков:
 - Отключен CSRF в ApiController
 - Нет свагера
+- Нет тестов
 
 ### Redis функциональность
 - **services/RedisService.php** - логика и методы
