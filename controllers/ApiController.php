@@ -13,6 +13,25 @@ use app\services\WebhookService;
 class ApiController extends Controller
 {
     /**
+     * @var WebhookService Сервис для обработки webhook-запросов
+     */
+    private $webhookService;
+
+    /**
+     * Конструктор контроллера с внедрением зависимости
+     * 
+     * @param string $id ID контроллера
+     * @param \yii\base\Module $module Модуль
+     * @param WebhookService $webhookService Сервис обработки webhook
+     * @param array $config Конфигурация
+     */
+    public function __construct($id, $module, WebhookService $webhookService, $config = [])
+    {
+        $this->webhookService = $webhookService;
+        parent::__construct($id, $module, $config);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function beforeAction($action)
@@ -35,8 +54,8 @@ class ApiController extends Controller
             
             // TODO:отправляем в очередь
             
-            $service = new WebhookService();
-            return $service->processWebhook($data);
+            // Используем внедренный сервис вместо создания через new
+            return $this->webhookService->processWebhook($data);
         } catch (\Exception $e) {
             // TODO: логируем
             

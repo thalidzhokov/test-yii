@@ -6,6 +6,12 @@ $redis = require __DIR__ . '/redis.php';
 $config = [
     'id' => 'messenger-api',
     'basePath' => dirname(__DIR__),
+    'container' => [
+        'definitions' => [
+            // Регистрируем WebhookService для внедрения зависимостей
+            'app\services\WebhookService' => 'app\services\WebhookService',
+        ],
+    ],
     'components' => [
         'request' => [
             'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?: 'your-secret-key-here',
