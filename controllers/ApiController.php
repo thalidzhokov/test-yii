@@ -18,7 +18,7 @@ class ApiController extends Controller
     private $webhookService;
 
     /**
-     * Конструктор контроллера с внедрением зависимости
+     * Конструктор контроллера
      * 
      * @param string $id ID контроллера
      * @param \yii\base\Module $module Модуль
