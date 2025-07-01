@@ -21,11 +21,16 @@ $config = [
         ],
         'db' => $db,
         'redis' => $redis,
-        // Или
-        // 'cache' => [
-        //     'class' => 'yii\redis\Cache',
-        //     'redis' => $redis,
-        // ],
+        // APCu кеш
+        'cache' => [
+            'class' => 'yii\caching\ApcCache',
+            'useApcu' => true,
+        ],
+        // Redis кеш
+        'redisCache' => [
+            'class' => 'yii\redis\Cache',
+            'redis' => 'redis',
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
