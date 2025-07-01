@@ -62,18 +62,50 @@ class Client extends ActiveRecord
     {
         // TODO: проверяем redis hash, если есть, то возвращаем
         
-        $client = static::findOne(['external_client_id' => $externalClientId]);
+        // Используем мьютекс для предотвращения race condition
+        $mutex = Yii::$app->mutex;
+        $lockName = 'client_create_' . $externalClientId;
         
-        if (!$client) {
-            $client = new static();
-            $client->external_client_id = $externalClientId;
-            $client->client_phone = $clientPhone;
-            $client->save();
-            
-            // TODO: добавляем нового клиента в redis hash
+        if ($mutex->acquire($lockName, 5)) { // Ждем до 5 секунд
+            try {
+                // Проверяем еще раз после получения блокировки
+                $client = static::findOne(['external_client_id' => $externalClientId]);
+                
+                if (!$client) {
+                    $client = new static();
+                    $client->external_client_id = $externalClientId;
+                    $client->client_phone = $clientPhone;
+                    $client->save();
+                    
+                    // TODO: добавляем нового клиента в redis hash
+                }
+                
+                return $client;
+            } finally {
+                $mutex->release($lockName);
+            }
+        } else {
+            throw new \Exception('Не удалось получить блокировку для создания клиента');
         }
         
+        /* Закомментированная реализация через SQL
+        // Используем INSERT ON CONFLICT для атомарного создания
+        $sql = "INSERT INTO {{%clients}} (external_client_id, client_phone, created_at, updated_at) 
+                VALUES (:external_id, :phone, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+                ON CONFLICT (external_client_id) DO NOTHING";
+        
+        Yii::$app->db->createCommand($sql)
+            ->bindValue(':external_id', $externalClientId)
+            ->bindValue(':phone', $clientPhone)
+            ->execute();
+        
+        // Получаем клиента (он точно существует после INSERT ON CONFLICT)
+        $client = static::findOne(['external_client_id' => $externalClientId]);
+        
+        // TODO: добавляем нового клиента в redis hash
+        
         return $client;
+        */
     }
 
     /**

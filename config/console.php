@@ -15,6 +15,10 @@ $config = [
         //     'class' => 'yii\redis\Cache',
         //     'redis' => $redis,
         // ],
+        'mutex' => [
+            'class' => 'yii\mutex\PgsqlMutex',
+            'db' => 'db',
+        ],
     ],
     
     

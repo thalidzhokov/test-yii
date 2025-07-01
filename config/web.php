@@ -36,6 +36,10 @@ $config = [
         'response' => [
             'format' => yii\web\Response::FORMAT_JSON,
         ],
+        'mutex' => [
+            'class' => 'yii\mutex\PgsqlMutex',
+            'db' => 'db',
+        ],
     ],
 ];
 
